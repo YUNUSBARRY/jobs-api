@@ -45,7 +45,7 @@ app.set('trust-proxy', 1);
 app.use(
   rateLimiter({
     windowMs: 10 * 60 * 1000, // 10 minutes
-    limit: 20,
+    limit: 200,
     message: "Too many request please try again later",
   })
 );
