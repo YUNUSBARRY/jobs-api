@@ -1,54 +1,62 @@
-// Import Job model (MongoDB collection)
+// ===============================
+// Imports & Dependencies
+// ===============================
 const Job = require("../models/Job");
-
-// Import HTTP status codes (e.g., 200, 201, 400)
 const { StatusCodes } = require("http-status-codes");
-
-// Import custom error classes
 const { BadRequestError, NotFoundError } = require("../errors");
 
+
 // ===============================
-// Get all jobs (placeholder)
+// Get All Jobs
 // ===============================
 const getAllJobs = async (req, res) => {
+  // Fetch all jobs created by the logged‑in user
   const jobs = await Job.find({ createdBy: req.user.userId });
+
+  // Return jobs with count
   res.status(StatusCodes.OK).json({ jobs, count: jobs.length });
 };
 
+
 // ===============================
-// Get single job (placeholder)
+// Get Single Job
 // ===============================
 const getJob = async (req, res) => {
-  // Will return one job using job ID
   const {
     user: { userId },
     params: { jobId },
   } = req;
+
+  // Find job by ID and owner
   const job = await Job.findOne({ _id: jobId, createdBy: userId });
 
+  // Handle missing job
   if (!job) {
     throw new NotFoundError(`No job with id: ${jobId}`);
   }
 
+  // Return job
   res.status(StatusCodes.OK).json({ job });
 };
 
+
 // ===============================
-// Create a new job
+// Create Job
 // ===============================
 const createJob = async (req, res) => {
-  // Attach logged-in user's ID to the job
+  // Attach owner ID to job
   req.body.createdBy = req.user.userId;
 
-  // Create job in database
+  // Create job entry
   const job = await Job.create({ ...req.body });
 
-  // Send response with status 201 (Created)
+  // Return created job
   res.status(StatusCodes.CREATED).json({ job });
 };
 
+
 // ===============================
-// Update job (placeholder)
+// Update Job
 // ===============================
 const updateJob = async (req, res) => {
   const {
@@ -57,34 +65,48 @@ const updateJob = async (req, res) => {
     body,
   } = req;
 
+  // Update job with validation
   const job = await Job.findOneAndUpdate(
     { _id: jobId, createdBy: userId },
     body,
     { returnDocument: 'after', runValidators: true },
   );
 
+  // Handle missing job
   if (!job) {
     throw new NotFoundError(`No job with id: ${jobId}`);
   }
+
+  // Return updated job
   res.status(StatusCodes.OK).json({ job });
 };
 
+
 // ===============================
-// Delete job (placeholder)
+// Delete Job
 // ===============================
 const deleteJob = async (req, res) => {
   const {
     params: { jobId },
     user: { userId },
   } = req;
+
+  // Delete job by ID and owner
   const job = await Job.findOneAndDelete({ _id: jobId, createdBy: userId });
+
+  // Handle missing job
   if (!job) {
     throw new NotFoundError(`No job with id: ${jobId}`);
   }
+
+  // Confirm deletion
   res.status(StatusCodes.OK).json({ msg: "Job deleted successfully" });
 };
 
-// Export all controller functions
+
+// ===============================
+// Exports
+// ===============================
 module.exports = {
   getAllJobs,
   getJob,
