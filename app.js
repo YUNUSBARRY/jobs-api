@@ -9,7 +9,7 @@ const express = require("express");
 // Security Middleware
 // ===============================
 const helmet = require('helmet');
-const cors = require('cors');
+const cors = require('cors');l
 const xss = require('xss-clean');
 const rateLimiter = require('express-rate-limit');
 
@@ -102,3 +102,4 @@ const start = async () => {
 };
 
 start();
+console.log('Hello world')
